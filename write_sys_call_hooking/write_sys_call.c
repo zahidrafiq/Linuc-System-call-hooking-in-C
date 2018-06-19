@@ -32,3 +32,31 @@ static unsigned long **aquire_sys_call_table(void)
     return NULL;
 }
 
+
+// This function disable the memory protection
+static void disable_page_protection(void) 
+{
+	printk(KERN_ALERT "Disabling page protection\n");
+    unsigned long value;
+    asm volatile("mov %%cr0, %0" : "=r" (value));
+
+    if(!(value & 0x00010000))
+        return;
+
+    asm volatile("mov %0, %%cr0" : : "r" (value & ~0x00010000));
+}
+
+// This function enable the memory protection
+static void enable_page_protection(void) 
+{
+	printk(KERN_ALERT "Enabling Page protection\n");
+    unsigned long value;
+    asm volatile("mov %%cr0, %0" : "=r" (value));
+
+    if((value & 0x00010000))
+        return;
+
+    asm volatile("mov %0, %%cr0" : : "r" (value | 0x00010000));
+}
+
+

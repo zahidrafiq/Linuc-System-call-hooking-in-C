@@ -106,7 +106,7 @@ static int find_sys_call_table (char *kern_ver) {
                 //syscall_table = (unsigned long long *) kstrtoll(sys_string, NULL, 16);
                 //syscall_table = kmalloc(sizeof(unsigned long *), GFP_KERNEL);
                 //syscall_table = kmalloc(sizeof(syscall_table), GFP_KERNEL);
-                kstrtoul(sys_string, 16, &syscall_table);
+             //   kstrtoul(sys_string, 16, &syscall_table);
                 printk(KERN_EMERG "syscall_table retrieved\n");
                  
                 kfree(sys_string);

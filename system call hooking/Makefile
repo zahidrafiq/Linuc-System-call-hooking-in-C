@@ -1,5 +1,5 @@
 
-obj-m=write_sys_call.o
+obj-m=sys_call_hooking.o
 
 KVERSION=$(shell uname -r)
 

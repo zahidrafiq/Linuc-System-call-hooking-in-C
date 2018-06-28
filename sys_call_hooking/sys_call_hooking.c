@@ -13,9 +13,8 @@ asmlinkage int (*ref_sys_open) (const char*, int, int);
 // Our fake system call that calls the original system call
 asmlinkage long new_sys_open(const char* file, int flags, int mode)
 {	
-	struct stat info;
-	int rv=stat(file,&info);
-	printk(KERN_INFO "Your System call is hooked : %s , %d",file,info.st_uid);
+	if(!(file[0]=='/' || file[0]=='.'))
+		printk(KERN_INFO "Your System call is hooked!");
         return ref_sys_open(file, flags, mode);
 }
 
@@ -62,7 +61,6 @@ static void enable_page_protection(void)
 // This function is executed when the module is loaded.
 static int __init hooking_start(void) 
 {
-    printk(KERN_INFO "init");
     if(!(sys_call_table = aquire_sys_call_table())) {
              return -1;
     }
@@ -80,7 +78,6 @@ static int __init hooking_start(void)
 // This method is executed when the module is removed/unloaded
 static void __exit hooking_end(void) 
 {
-	printk(KERN_INFO "exit");
     if(!sys_call_table)
         return;
     disable_page_protection();

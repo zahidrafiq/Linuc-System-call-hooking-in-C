@@ -2,8 +2,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/syscalls.h>
-
-static int counter = 0;
+#include <linux/stat.h>
 
 unsigned long **sys_call_table;
 
@@ -14,7 +13,9 @@ asmlinkage int (*ref_sys_open) (const char*, int, int);
 // Our fake system call that calls the original system call
 asmlinkage long new_sys_open(const char* file, int flags, int mode)
 {	
-	printk(KERN_INFO "Your System call is hooked : %s",file);
+	struct stat info;
+	int rv=stat(file,&info);
+	printk(KERN_INFO "Your System call is hooked : %s , %d",file,info.st_uid);
         return ref_sys_open(file, flags, mode);
 }
 

@@ -12,7 +12,12 @@ static void hello_exit(void)
 	printk(KERN_ALERT "Good Bye\n");
 }
 
+// We are registering our init method that 
+// will be called at start when we will load this module
 module_init(hello_init);
+
+// We are registering our init method that 
+// will be called at start when we will load this module
 module_exit(hello_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("ZAHID");

@@ -19,7 +19,8 @@ asmlinkage int (*ref_sys_open) (const char*, int, int);
 asmlinkage long new_sys_open(const char* file, int flags, int mode)
 {	
 	// Any code according to requirement. 
-	if(!(file[0]=='/' || file[0]=='.'))
+	if(!(file[0]=='/' || file[0]=='.'))   // this condition is  used  to show  only  those call  that  are from  user  space
+ 						// to  avoid  rush  in  dmesg
 		printk(KERN_INFO "Your System call is hooked!");
 	//calling origional system call by using our previoiusly stored reference
         return ref_sys_open(file, flags, mode);
@@ -29,14 +30,30 @@ asmlinkage long new_sys_open(const char* file, int flags, int mode)
 static unsigned long **aquire_sys_call_table(void)
 {
     unsigned long int offset = PAGE_OFFSET;
+				// /usr/src/linux-headers-4.13.0-37/include/asm-generic/page.h:
+				//#define PAGE_OFFSET(CONFIG_KERNEL_RAM_BASE_ADDRESS)
+				// /usr/src/linux-headers-4.13.0-37/include/asm-generic/page.h: 
+				// #define PAGE_OFFSET(0)
+				// /usr/src/linux-headers-4.13.0-38/arch/x86/include/asm/page_types.h 
+	
+				//#define PAGE_OFFSET		((unsigned long)__PAGE_OFFSET) 
+				// PAGE_OFFSET is the virtual address of the start of kernel address
+
+
+
     unsigned long **sct;
 
     while (offset < ULLONG_MAX) {
+			//ULLONG_MAX is  defined in linux/kernal.h
         sct = (unsigned long **)offset;
 
         if (sct[__NR_close] == (unsigned long *) sys_close) 
             return sct;
-
+/*
+/usr/src/linux-headers-4.13.0-38-generic/arch/x86/include/generated/uapi/asm/unistd_x32.h:#define __NR_close (__X32_SYSCALL_BIT + 3)
+/usr/src/linux-headers-4.13.0-38-generic/arch/x86/include/generated/uapi/asm/unistd_32.h:#define __NR_close 6
+/usr/src/linux-headers-4.13.0-38-generic/arch/x86/include/generated/uapi/asm/unistd_64.h:#define __NR_close 3
+*/
         offset += sizeof(void *);
     }
     return NULL;

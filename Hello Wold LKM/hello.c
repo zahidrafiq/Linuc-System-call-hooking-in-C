@@ -3,6 +3,7 @@
 
 static int hello_init(void)
 {
+	//prink prints  meassage
 	printk(KERN_ALERT "Hello World\n");	
 	return 0;
 }
@@ -20,5 +21,5 @@ module_init(hello_init);
 // will be called at start when we will unloaded this module
 module_exit(hello_exit);
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("ZAHID");
+MODULE_AUTHOR("PUCIT");
 MODULE_DESCRIPTION("A simple skeleton for a loadable Linux kernel module.");
